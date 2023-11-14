@@ -6,6 +6,7 @@ import chalk from 'chalk'
 import fs from 'fs';
 
 operation()
+buildAccount()
 
 function operation() {
 
@@ -35,3 +36,16 @@ function createAccount() {
     console.log(chalk.green('Defina as opções da sua conta a seguir'))
 }
 
+function buildAccount() {
+
+    inquirer.prompt([
+        {
+            name: 'accountName',
+            message: 'Digite um nome para a sua conta:'
+        }
+    ]).then(answer => {
+        console.log(answer)
+    })
+    .catch(err => console.log(err))
+
+}
