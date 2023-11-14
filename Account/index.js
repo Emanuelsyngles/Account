@@ -16,16 +16,25 @@ function operation() {
         choices: ['Criar conta', 'Consultar Saldo', 'Depositar', 'Sacar', 'Sair'],
     },
     ])
-    .then((answer) => {
+        .then((answer) => {
 
-        const action = answer['action']
+            const action = answer['action']
 
-        if(action === 'Criar conta') {
-            createAccount()
-        }
-    
-    })
-    .catch((err) => console.log(err))
+            if (action === 'Criar conta') {
+                createAccount()
+            } else if (action === 'Depositar') {
+                deposit()
+            } else if (action === 'Consultar Saldo') {
+
+            } else if (action === 'Sacar') {
+
+            }
+            else if (action === 'Sair') {
+                console.log(chalk.bgBlue.black('Obrigado por usar o Accounts!'))
+                process.exit()
+            }
+        })
+        .catch((err) => console.log(err))
 
 }
 
@@ -46,9 +55,50 @@ function buildAccount() {
             message: 'Digite um nome para a sua conta:'
         },
     ])
-    .then(answer => {
-        console.log(answer)
+        .then(answer => {
+            const accountName = answer['accountName']
+
+            console.info(answer['accountName'])
+
+            if (!fs.existsSync('accounts')) {
+                fs.mkdirSync('accounts')
+            }
+
+            if (fs.existsSync(`accounts/${accountName}.json`)) {
+                console.log(chalk.bgRed.black('Foi constatado em nosso sistema que essa conta já existe, esolha outro nome para sua conta :)'))
+                buildAccount()
+                return
+            }
+
+            fs.writeFileSync(`accounts/${accountName}.json`, '{"balance": 0}', function (err) {
+
+            },
+            )
+
+            console.log(chalk.green('Parabéns, sua conta foi criada em nosso banco com sucesso!'))
+            operation()
+
+        })
+        .catch((err) => console.log(err))
+}
+
+// add an amount to user account
+function deposit() {
+
+    inquirer.prompt([
+        {
+            name: 'actionName',
+            message: 'Qual o nome da sua conta?'
+        }
+    ])
+    .then((answer) => {
+
+        const accountName = answer['accountName']
+
+        // verify if account exists
+        if()
+
     })
-    .catch((err) => console.log(err))
+    .catch(err => console.log(err))
 
 }
