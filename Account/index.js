@@ -25,7 +25,7 @@ function operation() {
             } else if (action === 'Depositar') {
                 deposit()
             } else if (action === 'Consultar Saldo') {
-
+                getAccountBalance()
             } else if (action === 'Sacar') {
 
             }
