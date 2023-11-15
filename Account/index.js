@@ -96,9 +96,20 @@ function deposit() {
         const accountName = answer['accountName']
 
         // verify if account exists
-        if()
-
+        if(!checkAccount(accountName)) {
+            return deposit()
+        }
+        
     })
     .catch(err => console.log(err))
 
+}
+
+function checkAccount(accountName) {
+    if(!fs.existsSync(`accounts/${accountName}.json`)) {
+        console.log(chalk.bgRed.black('Esta conta não existe, escolha uma conta existente!'))
+        return false
+    }
+
+    return true
 }
