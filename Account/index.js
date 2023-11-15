@@ -44,7 +44,6 @@ function createAccount() {
     console.log(chalk.green('Defina as opções da sua conta a seguir'))
 
     buildAccount()
-
 }
 
 function buildAccount() {
@@ -71,7 +70,7 @@ function buildAccount() {
             }
 
             fs.writeFileSync(`accounts/${accountName}.json`, '{"balance": 0}', function (err) {
-
+                console.log(err)
             },
             )
 
@@ -84,38 +83,34 @@ function buildAccount() {
 
 // add an amount to user account
 function deposit() {
-
-    inquirer.prompt([
-        {
-            name: 'actionName',
-            message: 'Qual o nome da sua conta?'
-        }
-    ])
+    inquirer
+        .prompt([
+            {
+                name: 'accountName',
+                message: 'Qual o nome da sua conta?',
+            },
+        ])
         .then((answer) => {
-
             const accountName = answer['accountName']
 
-            // verify if account exists
             if (!checkAccount(accountName)) {
                 return deposit()
             }
 
-            inquirer.prompt([
-                {
-                    name: 'amount',
-                    message: 'Quanto você deseja depositar?'
-                },
-            ]).then((answer) => {
+            inquirer
+                .prompt([
+                    {
+                        name: 'amount',
+                        message: 'Quanto você deseja depositar?',
+                    },
+                ])
+                .then((answer) => {
+                    const amount = answer['amount']
 
-                const amount = answer['amount']
-
-                //add an amout
-
-            }).catch(err => console.log(err))
-
+                    addAmount(accountName, amount)
+                    operation()
+                })
         })
-        .catch(err => console.log(err))
-
 }
 
 function checkAccount(accountName) {
@@ -125,4 +120,21 @@ function checkAccount(accountName) {
     }
 
     return true
+}
+
+function addAmount(accountName, amount) {
+
+    const account = getAccount(accountName)
+
+    console.log(account)
+
+}
+
+function getAccount(accountName) {
+    const accountJSON = fs.readFileSync(`accounts/${accountName}.json`, {
+        encoding: 'utf8',
+        flag: 'r'
+    })
+
+    return JSON.parse(accountJSON)
 }
