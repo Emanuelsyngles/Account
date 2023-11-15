@@ -124,10 +124,23 @@ function checkAccount(accountName) {
 
 function addAmount(accountName, amount) {
 
-    const account = getAccount(accountName)
+    const accountData = getAccount(accountName)
 
-    console.log(account)
+    if (!amount) {
+        console.log(chalk.bgRed.black('Ocorreu um erro, tente novamente mais tarde!'))
+        return deposit()
+    }
 
+    accountData.balance = parseFloat(amount) + parseFloat(accountData.balance)
+
+    fs.writeFileSync(
+        `accounts/${accountName}.json`,
+        JSON.stringify(accountData),
+        function (err) {
+            console.log(err)
+        },
+    )
+    console.log(chalk.bgBlack.green(`Foi depositado um valor de R$${amount} na sua conta!`))
 }
 
 function getAccount(accountName) {
