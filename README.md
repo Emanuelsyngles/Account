@@ -13,7 +13,7 @@ Em breve!
   
  ## Referêcias
 
- - [Curso](https://www.udemy.com/) 
+ - [Udemy](https://www.udemy.com/) 
  - Algumas funcionalidades foram implementadas pelo próprio desenvolvedor.
  - Desenvolvido por Emanuel syngles.
 
