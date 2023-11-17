@@ -1,4 +1,4 @@
-##Interface do programa
+Interface do programa
 ![interface do banco](https://github.com/Emanuelsyngles/Account/assets/122393755/b6bdeec9-cd47-4865-b055-49dd7c20fb26)
 
 ## Informações
