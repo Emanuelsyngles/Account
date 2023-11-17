@@ -13,7 +13,7 @@ function operation() {
         type: 'list',
         name: 'action',
         message: 'O que você deseja fazer?',
-        choices: ['Criar conta', 'Consultar Saldo', 'Depositar', 'Sacar', 'Sair'],
+        choices: ['Criar conta', 'Consultar Saldo', 'Depositar', 'Sacar', 'Remover Conta', 'Sair',]
     },
     ])
         .then((answer) => {
@@ -27,15 +27,15 @@ function operation() {
             } else if (action === 'Consultar Saldo') {
                 getAccountBalance()
             } else if (action === 'Sacar') {
-
-            }
-            else if (action === 'Sair') {
+                widthdraw()
+            } else if (action === 'Remover Conta') {
+                offaccount()
+            } else if (action === 'Sair') {
                 console.log(chalk.bgBlue.black('Obrigado por usar o Accounts!'))
                 process.exit()
             }
         })
         .catch((err) => console.log(err))
-
 }
 
 // create an account
@@ -175,3 +175,118 @@ function getAccountBalance() {
                 operation()
         })
 }
+
+//widthdraw an amout from user account
+
+function widthdraw() {
+    inquirer.prompt([
+        {
+            name: 'accountName',
+            message: 'Qual o nome da conta que você deseja sacar um valor?'
+        },
+    ])
+        .then((answer) => {
+
+            const accountName = answer['accountName']
+
+            if (!checkAccount(accountName)) {
+
+                return widthdraw()
+
+            }
+
+            inquirer.prompt([
+                {
+                    name: 'amount',
+                    message: 'Quanto você deseja sacar? R$'
+                }
+            ])
+                .then((answer) => {
+
+                    const amount = answer['amount']
+
+                    removeAmount(accountName, amount)
+                    widthdraw()
+
+                })
+                .catch(err => console.log(err))
+
+        })
+        .catch(err => console.log(err))
+}
+
+function removeAmount(accountName, amount) {
+
+    const accountData = getAccount(accountName)
+
+    if (!amount) {
+        console.log(chalk.bgRed.black('Ocorreu um erro, tente novamente mais tarde!'))
+        return widthdraw()
+    }
+
+    if (accountData.balance < amount) {
+        console.log(chalk.bgRed.black('O valor que você está tentando sacar é maior que o saldo existente, tente outro valor possivel!'))
+        return widthdraw()
+    }
+
+    accountData.balance = parseFloat(accountData.balance) - parseFloat(amount)
+
+    fs.writeFileSync(
+        `accounts/${accountName}.json`,
+        JSON.stringify(accountData),
+        function (err) {
+            console.log(err)
+        },
+    )
+
+    console.log(chalk.green(`Foi realizado um saque de R$${amount} da sua conta!`))
+    operation()
+}
+
+// Remove account
+function offaccount() {
+    inquirer.prompt([
+        {
+            name: 'accountName',
+            message: 'Qual o nome da conta que você deseja excluir?',
+        },
+    ])
+        .then((answer) => {
+            const accountName = answer['accountName'];
+
+            if (!checkAccount(accountName)) {
+                offaccount();
+                return;
+            }
+
+            inquirer.prompt([
+                {
+                    type: 'confirm',
+                    name: 'confirmation',
+                    message: `Você tem certeza de que deseja excluir a conta ${accountName}?`,
+                },
+            ])
+                .then((confirmAnswer) => {
+                    if (confirmAnswer['confirmation']) {
+                        removeAccount(accountName);
+                    } else {
+                        console.log(chalk.bgYellow.black('Operação de exclusão de conta cancelada.'));
+                        operation();
+                    }
+                })
+                .catch((err) => console.log(err));
+        })
+        .catch((err) => console.log(err));
+}
+
+function removeAccount(accountName) {
+    fs.unlink(`accounts/${accountName}.json`, (err) => {
+        if (err) {
+            console.log(chalk.bgRed.black('Erro ao excluir a conta:', err));
+        } else {
+            console.log(chalk.bgGreen.black(`Conta ${accountName} excluída com sucesso!`));
+        }
+        operation();
+    });
+}
+
