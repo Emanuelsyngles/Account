@@ -248,18 +248,42 @@ function removeAmount(accountName, amount) {
 function offaccount() {
     inquirer.prompt([
         {
-            name:'accountName',
-            message:'Qual o nome da conta que você deseja desvincular ao account?'
+            name: 'accountName',
+            message: 'Qual o nome da conta que você deseja desvincular ao account?'
         },
     ])
-    .then((answer) => {
-        const accountName = answer['accountName']
-        inquirer.prompt([
-            {
-                name:'',
-               message:''
-            }
-        ])
+        .then((answer) => {
+            const accountName = answer['accountName']
+            inquirer.prompt([
+                {
+                    type: 'confirm',
+                    name: 'confirmation',
+                    message: `Você tem certeza que deseja excluir a conta ${accountName}?`
+                }
+            ])
+                .then((confirmAnswer) => {
+                    if (confirmAnswer['confirmation']) {
+                        removeAccount(accountName)
+                    } else {
+                        console.log(chalk.bgRed.black('Exclusão da conta cancelada!'))
+                        operation()
+                    }
+                })
+                .catch((err) => console.log(err))
+        })
+        .catch((err) => console.log(err))
+}
+
+function removeAccount(accountName) {
+    fs.unlink(`accounts/${accountName}.json`, (err) => {
+        if (err) {
+            console.log(chalk.bgRed.black('Erro ao excluir a conta, tente novamente masi tarde!'))
+        } else {
+            console.log(chalk.bgGreen.black(`A conta ${accountName} foi excluida com sucesso, até uma próxima!`))
+        }
+        operation()
     })
 }
+
+
 
